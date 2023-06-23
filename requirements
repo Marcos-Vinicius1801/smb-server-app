@@ -1,0 +1,367 @@
+O candidato deverá criar um sistema que execute as funções de um CRUD (Create, Restore,
+Update, Delete).
+
+• O sistema deverá ser composto por uma tela onde serão cadastrados os seguintes dados:
+
+o Nome
+o Telefone (com máscara para DDD e que aceite números com 8 ou 9 dígitos)
+o Email
+o Data de nascimento (com um widget de calendário para que seja escolhida uma data)
+
+
+• O sistema deverá conter uma tela onde poderão ser listados todos os cadastros efetuados. Nesta
+tela deverão ter as opções de buscar por cadastro pelo nome (uma parte do nome), por data de
+nascimento (buscar por um intervalo de datas) e pelo e-mail (uma parte do e-mail).
+
+
+• Nesta mesma tela de listagem, deverá haver a opção de criar um novo cadastro, alterar um
+cadastro existente e excluir um cadastro existente.
+
+• Entidades:
+  • User:
+    • Nome
+    • Telefone
+    • Email
+    • Data de nascimento
+
+• Rotas:
+  • Get:
+      • Buscar cadastro:
+          • filtros:
+           • buscar por cadastro pelo nome (uma parte do nome),
+           • data de nascimento (buscar por um intervalo de datas)
+           • e-mail (uma parte do e-mail).
+  • Post:
+      • criar um novo cadastro
+  • Put:
+      • alterar um novo cadastro
+  • Delete:
+      • excluir um novo cadastro
+
+• DB: MySQL -> ORM   
+
+• Backend design pattern: Repository Pattern
+
+• Tests:
+
+
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+}
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('users');
+    }
+};
+
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ */
+class UserFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->name(),
+            'phone_number' => $this->faker->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+        ];
+    }
+
+    /**
+     * Indicate that the model's email address should be unverified.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function unverified()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
+            ];
+        });
+    }
+}
+
+
+> App\Models\User::create(["name" => "Marcos", "phone_number" => "155548484", "email" => "assad@gmadas", "date_of_birth" => "14021990"]);
+
+   Illuminate\Database\QueryException  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'SMB.users' doesn't exist (SQL: insert into `users` (`name`, `phone_number`, `email`, `date_of_birth`, `updated_at`, `created_at`) values (Marcos, 155548484, assad@gmadas, 14021990, 2023-06-20 23:46:24, 2023-06-20 23:46:24)).
+
+
+<!--<style scoped>
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 2rem;
+}
+
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+
+  .logo {
+    margin: 0 2rem 0 0;
+  }
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
+}
+</style>
+-->
+
+
+<script setup>
+import { ref } from 'vue'
+
+//const name = ref(
+let val = ref(0)
+const id = ref(1)
+const data = [{id:1, user:"marcos"}]
+function getData(event){
+	const dataF = data.map(item => item.id)
+  const id = dataF
+  console.log(id)
+}
+</script>
+
+<template>
+	<button @click="event=> getData(event)">Greet</button>
+  
+  
+  <p v-show="0">
+    lorem	ipsun hurry boy she's waiting there for you
+  </p>
+
+
+
+
+
+
+
+
+
+
+  <?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Interface\UserInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+
+class UserController extends Controller
+{
+  public $user;
+  public $email;
+  public $date1;
+  public $date2;
+  public $name;
+  public $phone_number;
+  public $date_of_birth;
+  public $data;
+  public $id;
+
+
+  public function store(Request $request){
+    ["name" => $name,
+     "phone_number" => $phone_number,
+     "email" => $email,
+     "date_of_birth" => $date_of_birth
+    ] = $request->all();
+   
+    return \App\Models\User::create([
+      "name" => $name,
+      "phone_number" => $phone_number,
+      "email" => $email,
+      "date_of_birth" => $date_of_birth
+      
+    ]);
+}
+
+public function update($id, Request $request)
+{
+  ["name" => $name,
+  "phone_number" => $phone_number,
+  "email" => $email,
+  "date_of_birth" => $date_of_birth
+ ] = $request->all();
+
+  $user = \App\Models\User::where("id", $id)->firstOrFail();
+  $user->fill([
+    "name" => $name,
+    "phone_number" => $phone_number,
+    "email" => $email,
+    "date_of_birth" => $date_of_birth
+    
+  ])->save();
+  
+}
+
+public function delete($id)
+{
+  \App\Models\User::where("id", $id)->firstOrFail()->delete();
+  
+}
+
+  public function all()
+  {
+      return \App\Models\User::all();
+      // $repository = App::make(UserInterface::class);
+      // return $repository->list();
+  }
+
+  public function getUser($user)
+  {
+    $this->user = $user;
+    return \App\Models\User::where("name", "ilike", $user)->first();
+  }
+
+  public function getUserEmail($email)
+  {
+    $this->email = $email;
+
+    return \App\Models\User::where("email", "ilike", $email)->first();
+  }
+
+  public function getUserDateInterval($date1, $date2){
+    $this->date1 = $date1;
+    $this->date2 = $date2;
+
+    return \App\Models\User::whereBetween("date_of_birth", [$date1, $date2])->get();
+  }
+}
