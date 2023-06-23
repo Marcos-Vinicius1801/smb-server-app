@@ -33,4 +33,22 @@ class UserController extends Controller
     $res = $userService->all();
     return response()->json($res['data'], $res['statusCode']);
   }
+
+  public function getUser(Request $request){
+    $userService = App::make(UserService::class);
+    $res = $userService->getUser($request->all());
+    return response()->json($res['data'], $res['statusCode']);
+  }
+
+  public function getUserEmail($email){
+    $userService = App::make(UserService::class);
+    $res = $userService->getUserEmail($email);
+    return response()->json($res['data'], $res['statusCode']);
+  }
+
+  public function getUserDateInterval($startDate, $endDate){
+    $userService = App::make(UserService::class);
+    $res = $userService->getUserDateInterval($startDate, $endDate);
+    return response()->json($res['data'], $res['statusCode']);
+  }
 }

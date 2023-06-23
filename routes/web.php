@@ -18,7 +18,7 @@ Route::get('/api/user', [UserController::class, 'all'])->name('user.all');
 
 Route::get('/api/user/{user}', [UserController::class, 'getUser'])->name('user.getUser');
 Route::get('/api/user/email/{email}', [UserController::class, 'getUserEmail'])->name('user.getUserEmail');
-Route::get('/api/user/date1/{date1}/date2/{date2}', [UserController::class, 'getUserDateInterval'])
+Route::get('/api/user/startDate/{startDate}/endDate/{endDate}', [UserController::class, 'getUserDateInterval'])
 ->name('user.getUserDateInterval');
 
 Route::post('/api/user', [UserController::class, 'store'])->name('user.store');

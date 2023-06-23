@@ -60,8 +60,17 @@ class UserRepository implements UserInterface
     $this->model::where("id", $id)->firstOrFail()->delete();
   }
 
-  public function findBy($criteria)
+  public function getUser($user)
   {
+    return $this->model::where("name", "like", $user)->first();
+  }
 
+  public function getUserEmail($email)
+  {
+    return $this->model::where("email", "like", $email)->first();
+  }
+
+  public function getUserDateInterval($startDate, $endDate){
+    return $this->model::whereBetween("date_of_birth", [$startDate, $endDate])->get();
   }
 }

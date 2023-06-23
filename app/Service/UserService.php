@@ -92,4 +92,61 @@ class UserService
       ];
     }
   }
+
+  public function getUser($data)
+  {
+    try{
+      $user = $this->userInterface->getUser($data);
+      return [
+        "data" => $user,
+        "statusCode" => 200,
+        "message" => "Usuário encontrado"
+      ];
+
+    }catch(Exception $e) {
+      return [
+        "data" => [],
+        "statusCode" => 500,
+        "message" => "Não foi possível encontrar usuário"
+      ];
+    }
+  }
+
+  public function getUserEmail($data)
+  {
+    try{
+      $user = $this->userInterface->getUserEmail($data);
+      return [
+        "data" => $user,
+        "statusCode" => 200,
+        "message" => "Usuário encontrado"
+      ];
+
+    }catch(Exception $e) {
+      return [
+        "data" => [],
+        "statusCode" => 500,
+        "message" => "Não foi possível encontrar usuário"
+      ];
+    }
+  }
+
+  public function getUserDateInterval($startDate, $endDate)
+  {
+    try{
+      $user = $this->userInterface->getUserDateInterval($startDate, $endDate);
+      return [
+        "data" => $user,
+        "statusCode" => 200,
+        "message" => "Usuário encontrado"
+      ];
+
+    }catch(Exception $e) {
+      return [
+        "data" => [],
+        "statusCode" => 500,
+        "message" => "Não foi possível encontrar usuário"
+      ];
+    }
+  }
 }
