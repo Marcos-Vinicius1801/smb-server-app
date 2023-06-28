@@ -34,9 +34,9 @@ class UserController extends Controller
     return response()->json($res['data'], $res['statusCode']);
   }
 
-  public function getUser(Request $request){
+  public function getUser($name){
     $userService = App::make(UserService::class);
-    $res = $userService->getUser($request->all());
+    $res = $userService->getUser($name);
     return response()->json($res['data'], $res['statusCode']);
   }
 

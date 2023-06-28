@@ -41,3 +41,9 @@ sudo apt install mysql-server
 
 ##### Installing Composer
 sudo apt install composer
+
+##### Migrations
+php artisan migrate
+
+##### Run server
+php artisan serve

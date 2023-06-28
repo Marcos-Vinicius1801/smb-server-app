@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interface\UserInterface;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository implements UserInterface
 {
@@ -62,12 +63,12 @@ class UserRepository implements UserInterface
 
   public function getUser($user)
   {
-    return $this->model::where("name", "like", $user)->first();
+    return $this->model::where("name", "like", "%$user%")->get()->toArray();
   }
 
   public function getUserEmail($email)
   {
-    return $this->model::where("email", "like", $email)->first();
+    return $this->model::where("email","like", "%$email%")->get()->toArray();
   }
 
   public function getUserDateInterval($startDate, $endDate){
